@@ -5,7 +5,7 @@
 #                 1987, 1988, 1989, 1990, 1991, 1992
 # Copyright OMRON Corporation. 1987, 1988, 1989, 1990, 1991, 1992, 1999
 # Copyright ASTEC, Inc. 1987, 1988, 1989, 1990, 1991, 1992
-# Copyright FreeWnn Project 2001, 2004, 2010
+# Copyright FreeWnn Project 2001, 2004, 2010, 2019
 #
 # Author: OMRON SOFTWARE Co., Ltd. <freewnn@rd.kyoto.omronsoft.co.jp>
 # Maintainer:  FreeWnn Project
@@ -59,15 +59,15 @@ all:: $(ALLTGT)
 .SUFFIXES: .dic .u
 
 .u.dic:
-	$(ATOD) -h $(HINSI) $@ < $<
+	$(ATOD) -N -h $(HINSI) -d `../../Wnn/pubdic/getdmydevnum $@ ` $@ < $<
 
 $(DICS): $(HINSI)
 
 $(FULL):: $(FZK_SRCS) con.master-.c
-	$(FZK_PP) -I$(srcdir) $(FZK_FLAG) con.master-.c | egrep -v '^(# |#line |#pragma |$$)' | $(ATOF) -h $(HINSI) $@
+	$(FZK_PP) -I$(srcdir) $(FZK_FLAG) con.master-.c | egrep -v '^(# |#line |#pragma |$$)' | $(ATOF) -h $(HINSI) -d `../../Wnn/pubdic/getdmydevnum $@ ` $@
 
 $(FULLR):: $(FZK_SRCS) con.masterR-.c
-	$(FZK_PP) -I$(srcdir) $(FZK_FLAG) con.masterR-.c | egrep -v '^(# |#line |#pragma |$$)' | $(ATOF) -h $(HINSI) $@
+	$(FZK_PP) -I$(srcdir) $(FZK_FLAG) con.masterR-.c | egrep -v '^(# |#line |#pragma |$$)' | $(ATOF) -h $(HINSI) -d `../../Wnn/pubdic/getdmydevnum $@ ` $@
 
 # To avoid circular dependency, we don't use 'con.master?.c'
 con.master-.c: con.master

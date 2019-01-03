@@ -10,7 +10,7 @@
  *                 1987, 1988, 1989, 1990, 1991, 1992
  * Copyright OMRON Corporation. 1987, 1988, 1989, 1990, 1991, 1992, 1999
  * Copyright ASTEC, Inc. 1987, 1988, 1989, 1990, 1991, 1992
- * Copyright FreeWnn Project 1999, 2000, 2002, 2004
+ * Copyright FreeWnn Project 1999, 2000, 2002, 2004, 2019
  *
  * Maintainer:  FreeWnn Project   <freewnn@tomo.gr.jp>
  *
@@ -148,13 +148,15 @@ struct uind2 *uhopter;
 
 unsigned char *hinsi_file_name = NULL;
 
+struct dummy_dev_number dummy_device_num;
+
 void
 init (int argc, char **argv)
 {
   int c;
 
   maxserial = MAX_ENTRIES;
-  while ((c = getopt (argc, argv, "SURrs:P:p:Nneh:")) != EOF)
+  while ((c = getopt (argc, argv, "SURrs:P:p:Nneh:d:")) != EOF)
     {
       switch (c)
         {
@@ -194,7 +196,15 @@ init (int argc, char **argv)
               usage ();
               exit (1);
             }
-          break;
+	  break;
+	case 'd': /* dummy device number.  */
+	  dummy_dev_num.used = 1;
+	  if (sscanf(optarg, "%d", &dummy_dev_num.dev) == 0)
+	    {
+              usage ();
+              exit (1);
+	    }
+	  break;
         }
     }
   if (to_esc && which_dict == WNN_REV_DICT)
@@ -540,8 +550,9 @@ output_dic_index (void)
 static void
 usage (void)
 {
-  fprintf (stderr, "Usage : %s [-r -R -S -U -e -s maximum word count(default %d) -P passwd (or -N) -p hindo_passwd (or -n) -h hinsi_file_name] <dictonary filename>\n", com_name, MAX_ENTRIES);
+  fprintf (stderr, "Usage : %s [-d dummy_device_number -r -R -S -U -e -s maximum word count(default %d) -P passwd (or -N) -p hindo_passwd (or -n) -h hinsi_file_name] <dictonary filename>\n", com_name, MAX_ENTRIES);
   fprintf (stderr, "Input the ascii dictionary from stdin\n");
+  fprintf (stderr, " see also: https://osdn.net/projects/freewnn/ticket/38482\n");
   fprintf (stderr, "-r is for creating dictionary with normal and reverse index\n");
   fprintf (stderr, "-R is for creating reverse (implies updatable) dictionary. (default)\n");
   fprintf (stderr, "-S is for creating static    dictionary.\n");

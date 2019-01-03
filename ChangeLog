@@ -3,7 +3,34 @@
   Japanese...
  */
 
-Mon, 18 May 2015 02:25:00  Tomoki AONO <aonoto at users.osdn.me>
+Thu, 03 Jan 2019 15:10:00  Mitsutoshi NAKANO  <ItSANgo@gmail.com>
+	* ChangeLog.en: added
+	* Contrib/dic/gerodic/Makefile.in (OBJ): changed
+	* Wnn/etc/bdic.c (create_file_header): changed
+	* Wnn/etc/bdic.c (set_dummy_uniq_info): added
+	* Wnn/etc/bdic.c (set_real_uniq_info): added
+	* Wnn/etc/bdic.c (check_inode): changed
+	* Wnn/include/etc.h: added
+	* Wnn/jutil/atod.c (init): changed
+	* Wnn/jutil/atod.c (usage): changed
+	* Wnn/jutil/atof.c (init): changed
+	* Wnn/jutil/atof.c (usage): changed
+	* Wnn/pubdicplus/Makefile.in: changed
+	* Wnn/wnncons/dic/Makefile.in: changed
+	* cWnn/cdic/Makefile.in: changed
+	* cWnn/tdic/Makefile.in: changed
+	* kWnn/kdic/Makefile.in: changed
+	* Contrib/dic/gerodic/devnum.conf: added
+	* Wnn/pubdic/getdmydevnum: added
+	* Wnn/pubdicplus/devnum.conf: added
+	* Wnn/wnncons/dic/devnum.conf: added
+	* cWnn/cdic/devnum.conf: added
+	* cWnn/tdic/devnum.conf: added
+	* kWnn/kdic/devnum.conf: added
+	for "Reproducible builds".
+	See <https://osdn.net/projects/freewnn/ticket/38482>.
+
+MON, 18 May 2015 02:25:00  Tomoki AONO <aonoto at users.osdn.me>
 
 	* ChangeLog, ChangeLog.en, configure, configure.in:
 

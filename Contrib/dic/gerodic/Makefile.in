@@ -6,7 +6,7 @@
 # This file is part of FreeWnn.
 #
 # Copyright Wnn Consortium. 1993
-# Copyright FreeWnn Project 2001, 2006
+# Copyright FreeWnn Project 2001, 2006, 2019
 #
 # Author: OMRON SOFTWARE Co., Ltd. <freewnn@rd.kyoto.omronsoft.co.jp>
 # Maintainer:  FreeWnn Project
@@ -65,7 +65,7 @@ OBJ=g-jinmei.dic
 all:: ${OBJ}
 
 $(OBJ): $(SRC)
-	${ATOD} -h ${HINSI} ${OBJ} < ${SRC}
+	${ATOD} -N -h ${HINSI} -d `../../../Wnn/pubdic/getdmydevnum ${OBJ} ` ${OBJ} < ${SRC}
 
 install:: ${OBJ}
 	@if [ -d $(DESTDIR)$(GERODIR) ]; then set +x; \

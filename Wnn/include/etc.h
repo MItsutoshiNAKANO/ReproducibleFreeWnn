@@ -9,7 +9,7 @@
  *                 1987, 1988, 1989, 1990, 1991, 1992
  * Copyright OMRON Corporation. 1987, 1988, 1989, 1990, 1991, 1992, 1999
  * Copyright ASTEC, Inc. 1987, 1988, 1989, 1990, 1991, 1992
- * Copyright FreeWnn Project 1999, 2000, 2001, 2002, 2005, 2006, 2013
+ * Copyright FreeWnn Project 1999, 2000, 2001, 2002, 2005, 2006, 2013, 2019
  *
  * Maintainer:  FreeWnn Project
  *
@@ -212,5 +212,11 @@ extern void cwnn_py_str_analysis FRWNN_PARAMS((register char *, register char *,
 #ifdef CONVERT_with_SiSheng
 extern int cwnn_yincod_pzy_str FRWNN_PARAMS((register w_char *, register w_char *, int, int));
 #endif	/* CONVERT_with_SiSheng  */
+
+/* atod.c.  */
+extern struct dummy_dev_number {
+  int used; /* 0: didn't use. 1: used. */
+  int dev;
+} dummy_dev_num;
 
 #endif	/* FRWNN_ETC_H */

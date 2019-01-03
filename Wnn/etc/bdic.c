@@ -10,7 +10,7 @@
  *                 1987, 1988, 1989, 1990, 1991, 1992
  * Copyright OMRON Corporation. 1987, 1988, 1989, 1990, 1991, 1992, 1999
  * Copyright ASTEC, Inc. 1987, 1988, 1989, 1990, 1991, 1992
- * Copyright FreeWnn Project 1999, 2000, 2002, 2003, 2004, 2005
+ * Copyright FreeWnn Project 1999, 2000, 2002, 2003, 2004, 2005, 2019
  *
  * Maintainer:  FreeWnn Project   <freewnn@tomo.gr.jp>
  *
@@ -201,6 +201,9 @@ vputc (char c, FILE* fp)
   return (0);
 }
 #endif /* BDIC_WRITE_CHECK */
+
+struct dummy_dev_number dummy_dev_num;
+
 
 /* XXX					note 2004.07.08  Hiroo Ono
  * It used to return int only if BDIC_WRITE_CHECK was defined,
@@ -539,12 +542,29 @@ move_tmp_to_org (char* tmp_name, char* org_name, int copy)
 }
 #endif /* BDIC_WRITE_CHECK */
 
-JS_STATIC int
-create_file_header (FILE* ofpter, int file_type, char* file_passwd)
+static void
+set_dummy_uniq_info(struct wnn_file_head* fhp)
+{
+  char hostname[WNN_HOSTLEN];
+
+  gethostname (hostname, WNN_HOSTLEN);
+  hostname[WNN_HOSTLEN - 1] = '\0';
+
+  fhp->file_uniq.time = 0;
+  fhp->file_uniq.dev = dummy_dev_num.dev;
+  fhp->file_uniq.inode = 0;
+  bzero (fhp->file_uniq.createhost, WNN_HOSTLEN);
+  strcpy (fhp->file_uniq.createhost, "nohostname");
+
+  fhp->file_uniq_org = fhp->file_uniq;
+}
+
+
+static int
+set_real_uniq_info(struct wnn_file_head* fhp, FILE* ofpter)
 {
   struct stat buf;
   char hostname[WNN_HOSTLEN];
-  struct wnn_file_head fh;
 
   if (fstat (fileno (ofpter), &buf) == -1)
     {
@@ -553,18 +573,27 @@ create_file_header (FILE* ofpter, int file_type, char* file_passwd)
   gethostname (hostname, WNN_HOSTLEN);
   hostname[WNN_HOSTLEN - 1] = '\0';
 
-  fh.file_uniq.time = (int) buf.st_ctime;
-  fh.file_uniq.dev = (int) buf.st_dev;
-  fh.file_uniq.inode = (int) buf.st_ino;
-  bzero (fh.file_uniq.createhost, WNN_HOSTLEN);
-  strcpy (fh.file_uniq.createhost, hostname);
+  fhp->file_uniq.time = (int) buf.st_ctime;
+  fhp->file_uniq.dev = (int) buf.st_dev;
+  fhp->file_uniq.inode = (int) buf.st_ino;
+  bzero (fhp->file_uniq.createhost, WNN_HOSTLEN);
+  strcpy (fhp->file_uniq.createhost, hostname);
 
-  /* file_uniq_org */
-  fh.file_uniq_org.time = (int) buf.st_ctime;
-  fh.file_uniq_org.dev = (int) buf.st_dev;
-  fh.file_uniq_org.inode = (int) buf.st_ino;
-  bzero (fh.file_uniq_org.createhost, WNN_HOSTLEN);
-  strcpy (fh.file_uniq_org.createhost, hostname);
+  fhp->file_uniq_org = fhp->file_uniq;
+  return (0);
+}
+
+JS_STATIC int
+create_file_header (FILE* ofpter, int file_type, char* file_passwd)
+{
+  struct wnn_file_head fh;
+  if (dummy_dev_num.used) {
+    set_dummy_uniq_info(&fh);
+  } else {
+    if (set_real_uniq_info(&fh, ofpter)) {
+      return (-1);
+    }
+  }
 
   fh.file_type = file_type;
   if (file_passwd)
@@ -660,6 +689,9 @@ input_file_uniq (struct wnn_file_uniq* funiq, FILE* ifpter)
   return (0);
 }
 
+/**
+ * The function name doesn't match the current implementation.
+ */
 JS_STATIC int
 check_inode (FILE* f, struct wnn_file_head* fh)
 {
@@ -668,10 +700,7 @@ check_inode (FILE* f, struct wnn_file_head* fh)
     {
       return (-1);
     }
-  if ((int) buf.st_ino != fh->file_uniq.inode)
-    {
-      return (-1);
-    }
+  /* deleted logic for checking inode.  */
   return (0);
 }
 

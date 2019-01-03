@@ -10,7 +10,7 @@
 #                 1987, 1988, 1989, 1990, 1991, 1992
 # Copyright OMRON Corporation. 1987, 1988, 1989, 1990, 1991, 1992, 1999
 # Copyright ASTEC, Inc. 1987, 1988, 1989, 1990, 1991, 1992
-# Copyright FreeWnn Project 1999, 2000, 2001, 2002, 2004, 2010, 2013
+# Copyright FreeWnn Project 1999-2002, 2004, 2010, 2013, 2019
 # 
 # Maintainer:  FreeWnn Project
 # 
@@ -347,13 +347,13 @@ $(WNNDICS): pod $(PUBDICPLUSSRC)/pubdic.p
 .SUFFIXES: .hd .u .dic .more .fsrc .fzk
 
 .u.dic:
-	cat $*.hd $< | $(ATOD) -p $(VERSION) -P $(VERSION) -h $(HINSI) $@
+	cat $*.hd $< | $(ATOD) -N -h $(HINSI) -d `../pubdic/getdmydevnum $@ ` $@
 
 .hd.more:
 	$(ATOD) -h $(HINSI) $@ < $<
 
 .fsrc.fzk:
-	egrep -v '^(# |#line |#pragma |$$)' $< | $(ATOF) -h $(HINSI) $@
+	egrep -v '^(# |#line |#pragma |$$)' $< | $(ATOF) -h $(HINSI) -d `../pubdic/getdmydevnum $@ ` $@
 
 $(DIC): $(HINSI)
 

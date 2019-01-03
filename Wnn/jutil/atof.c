@@ -10,7 +10,7 @@
  *                 1987, 1988, 1989, 1990, 1991, 1992
  * Copyright OMRON Corporation. 1987, 1988, 1989, 1990, 1991, 1992, 1999
  * Copyright ASTEC, Inc. 1987, 1988, 1989, 1990, 1991, 1992
- * Copyright FreeWnn Project 1999, 2000, 2002
+ * Copyright FreeWnn Project 1999, 2000, 2002, 2019
  *
  * Maintainer:  FreeWnn Project   <freewnn@tomo.gr.jp>
  *
@@ -1569,13 +1569,21 @@ init (argc, argv)
   extern int optind;
   extern char *optarg;
 
-  while ((c = getopt (argc, argv, "h:")) != EOF)
+  while ((c = getopt (argc, argv, "h:d:")) != EOF)
     {
       switch (c)
         {
         case 'h':
           hinsi_file_name = optarg;
           break;
+	case 'd': /* dummy device number.  */
+	  dummy_dev_num.used = 1;
+	  if (sscanf(optarg, "%d", &dummy_dev_num.dev) == 0)
+	    {
+              usage ();
+              exit (1);
+	    }
+	  break;
         }
     }
   if (optind)
@@ -1598,5 +1606,7 @@ init (argc, argv)
 static void
 usage ()
 {
-  fprintf (stderr, "Usage : %s [-h <hinsi filename>] <fzk.data filename>\n", com_name);
+  fprintf (stderr, "Usage : %s [-d <dummy_device_number>] [-h <hinsi filename>] <fzk.data filename>\n", com_name);
+  fprintf (stderr, "-d is for dummy device number\n");
+  fprintf (stderr, " see also: https://osdn.net/projects/freewnn/ticket/38482\n");
 }
